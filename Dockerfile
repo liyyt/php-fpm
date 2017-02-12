@@ -13,9 +13,14 @@ ENV BUILD_DEPS \
     re2c
 
 ENV PERSISTENT_DEPS \
-    libmcrypt-dev
+    libmcrypt-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libltdl \
+    libpng-dev
 
 ENV PHP_EXT \
+    gd \
     iconv \
     mbstring \
     mcrypt \
@@ -27,6 +32,7 @@ RUN set -xe \
     && apk upgrade --update \
 	&& apk add --no-cache --virtual .build-deps $BUILD_DEPS \
     && apk add --no-cache --virtual .persistent-deps $PERSISTENT_DEPS \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install $PHP_EXT \
     && pecl install redis apcu intl \
     && docker-php-ext-enable --ini-name 10-apcu.ini apcu \
